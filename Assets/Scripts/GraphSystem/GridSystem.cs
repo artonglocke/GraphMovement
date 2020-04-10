@@ -10,6 +10,7 @@ namespace GraphSystem
 		public LayerMask unwalkableLayer;
 		public Vector2 gridArea;
 		public float nodeRadius;
+		public float offsetY = 1f;
 
 		public bool drawGizmos;
 
@@ -84,7 +85,10 @@ namespace GraphSystem
 				{
 					// Calculate node point, starting with bottom left corner
 					Vector3 point = bottomLeft + Vector3.right * (i * m_nodeDiameter + nodeRadius) + Vector3.forward * (j * m_nodeDiameter + nodeRadius);
-					
+
+					//Apply offset
+					point.y = offsetY;
+
 					// Check whether or not an there is an obstacle at the point
 					bool isWalkable = !Physics.CheckSphere(point, nodeRadius, unwalkableLayer);
 

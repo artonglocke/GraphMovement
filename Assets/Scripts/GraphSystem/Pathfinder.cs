@@ -7,9 +7,17 @@ using System.Linq;
 
 namespace GraphSystem
 {
+	public enum HeuristicsType
+	{
+		Manhatan,
+		Diagonal,
+		Euclidean
+	}
+
 	[RequireComponent(typeof(GridSystem))]
 	public class Pathfinder : MonoBehaviour
 	{
+		public HeuristicsType heuristics = HeuristicsType.Euclidean;
 		private GridSystem grid;
 		private PathfinderProcessor processor;
 
@@ -124,14 +132,26 @@ namespace GraphSystem
 
 		private int GetDistance(Node first, Node second)
 		{
-			int destinationX = Mathf.Abs(first.gridX - second.gridX);
-			int destinationY = Mathf.Abs(first.gridY - second.gridY);
+			int distanceX = Mathf.Abs(first.gridX - second.gridX);
+			int distanceY = Mathf.Abs(first.gridY - second.gridY);
 
-			if (destinationX > destinationY)
+			switch (heuristics)
 			{
-				return 14 * destinationY + 10 * (destinationX - destinationY);
+				case HeuristicsType.Manhatan:
+					return distanceX + distanceY;
+				case HeuristicsType.Diagonal:
+					return Math.Max(distanceX, distanceY);
+				case HeuristicsType.Euclidean:
+					if (distanceX > distanceY)
+					{
+						return 14 * distanceY + 10 * (distanceX - distanceY);
+					}
+					return 14 * distanceX + 10 * (distanceY - distanceX); ;
+				default:
+					// Manhatan for default, not needed, but since its a switch case, must be
+					return distanceX + distanceY;
 			}
-			return 14 * destinationX + 10 * (destinationY - destinationX); ;
+			
 		}
 	}
 }
