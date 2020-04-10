@@ -18,6 +18,7 @@ namespace GraphSystem
 		private float m_nodeDiameter;
 		private int m_gridX;
 		private int m_gridY;
+		private Obstacle[] obstacles;
 
 		void Awake()
 		{
@@ -25,6 +26,7 @@ namespace GraphSystem
 			m_nodeDiameter = nodeRadius * 2f;
 			m_gridX = Mathf.RoundToInt(gridArea.x / m_nodeDiameter);
 			m_gridY = Mathf.RoundToInt(gridArea.y / m_nodeDiameter);
+			obstacles = FindObjectsOfType<Obstacle>();
 			InitializeGrid();
 		}
 
@@ -90,7 +92,7 @@ namespace GraphSystem
 					point.y = offsetY;
 
 					// Check whether or not an there is an obstacle at the point
-					bool isWalkable = !Physics.CheckSphere(point, nodeRadius, unwalkableLayer);
+					bool isWalkable = !CheckCollisions(point, nodeRadius);
 
 					// Create node
 					m_grid[i, j] = new Node(isWalkable, point, i, j);
@@ -115,9 +117,24 @@ namespace GraphSystem
 				{
 					// Green is for go, red is for obstacle				
 					Gizmos.color = (node.isWalkable) ? Color.green : Color.red;
-					Gizmos.DrawWireSphere(node.position, nodeRadius);
+					Gizmos.DrawSphere(node.position, nodeRadius);
 				}
 			}
+		}
+
+		private bool CheckCollisions(Vector3 point, float radius)
+		{
+			Vector2 position = new Vector2(point.x, point.z);
+			Vector2 objMin = position - Vector2.right * radius - Vector2.up * radius;
+			Vector2 objMax = position + Vector2.right * radius + Vector2.up * radius;
+			foreach (var obstacle in obstacles)
+			{
+				if (obstacle.IsColliding(objMin, objMax))
+				{
+					return true;
+				}
+			}
+			return false;
 		}
 	}
 }
