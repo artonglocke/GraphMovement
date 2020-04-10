@@ -29,6 +29,11 @@ namespace GraphSystem
 
 		private IEnumerator OnMoveAlongPath()
 		{
+			if (m_path.Length == 0)
+			{
+				yield break; // In case of movement desynchronization
+			}
+
 			Vector3 current = m_path[0];
 			m_targetIndex = 0;
 			while (true)
