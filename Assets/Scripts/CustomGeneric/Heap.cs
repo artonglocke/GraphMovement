@@ -12,26 +12,25 @@ namespace CustomGenerics
 {
 	public class Heap<T> where T : IHeapElement<T>
 	{
-		private T[] elements;
 		public int Count { get; private set; }
-
+		private T[] m_elements;
 
 		public Heap(int maxSize)
 		{
-			elements = new T[maxSize];
+			m_elements = new T[maxSize];
 		}
 
 		public void Add(T element)
 		{
 			element.index = Count;
-			elements[Count] = element;
+			m_elements[Count] = element;
 			SortUp(element);
 			++Count;
 		}
 
 		public bool Contains(T element)
 		{
-			return Equals(elements[element.index], element);
+			return Equals(m_elements[element.index], element);
 		}
 
 		public void Update(T element)
@@ -42,10 +41,10 @@ namespace CustomGenerics
 		public T RemoveFirst()
 		{
 			// Remove element from heap, update count, set last element as first then re-sort the heap
-			T firstElement = elements[0];
+			T firstElement = m_elements[0];
 			--Count;
-			T newFirstElement = elements[Count];
-			elements[0] = newFirstElement;
+			T newFirstElement = m_elements[Count];
+			m_elements[0] = newFirstElement;
 			newFirstElement.index = 0;
 			SortDown(newFirstElement);
 			return firstElement;
@@ -56,7 +55,7 @@ namespace CustomGenerics
 			int parentIndex = (element.index - 1) / 2;
 			while (true)
 			{
-				T parentElement = elements[parentIndex];
+				T parentElement = m_elements[parentIndex];
 				if (element.CompareTo(parentElement) > 0)
 				{
 					Swap(element, parentElement);
@@ -84,16 +83,16 @@ namespace CustomGenerics
 					if (indexRight < Count)
 					{
 						// Check children priority
-						if (elements[indexLeft].CompareTo(elements[indexRight]) < 0)
+						if (m_elements[indexLeft].CompareTo(m_elements[indexRight]) < 0)
 						{
 							swapIndex = indexRight;
 						}
 					}
 
 					// Check parent priority against children priority
-					if (element.CompareTo(elements[swapIndex]) < 0)
+					if (element.CompareTo(m_elements[swapIndex]) < 0)
 					{
-						Swap(element, elements[swapIndex]);
+						Swap(element, m_elements[swapIndex]);
 						continue;
 					}
 					return;
@@ -108,8 +107,8 @@ namespace CustomGenerics
 		private void Swap(T first, T second)
 		{
 			// Swap elements
-			elements[first.index] = second;
-			elements[second.index] = first;
+			m_elements[first.index] = second;
+			m_elements[second.index] = first;
 
 			// Swap indices
 			int tmp = first.index;

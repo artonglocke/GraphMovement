@@ -21,40 +21,40 @@ namespace GraphSystem
 			}
 		}
 
-		private Queue<Request> requests = new Queue<Request>();
-		Request currentRequest;
+		private Queue<Request> m_requests = new Queue<Request>();
+		private Request m_currentRequest;
 
-		private static PathfinderProcessor instance; //  Convert to global messaging system instead of singleton
-		private Pathfinder pathfinder;
-		private bool isProcessing;
+		private static PathfinderProcessor s_instance; //  Convert to global messaging system instead of singleton
+		private Pathfinder m_pathfinder;
+		private bool m_isProcessing;
 
 		private void Awake()
 		{
-			instance = this;
-			pathfinder = GetComponent<Pathfinder>();
+			s_instance = this;
+			m_pathfinder = GetComponent<Pathfinder>();
 		}
 
 		public static void RequestPath(Vector3 start, Vector3 end, Action<Vector3[], bool> action)
 		{
 			Request request = new Request(start, end, action);
-			instance.requests.Enqueue(request);
-			instance.ProcessNext();
+			s_instance.m_requests.Enqueue(request);
+			s_instance.ProcessNext();
 		}
 
 		private void ProcessNext()
 		{
-			if (!isProcessing && requests.Count > 0)
+			if (!m_isProcessing && m_requests.Count > 0)
 			{
-				currentRequest = requests.Dequeue();
-				isProcessing = true;
-				pathfinder.Begin(currentRequest.start, currentRequest.end);
+				m_currentRequest = m_requests.Dequeue();
+				m_isProcessing = true;
+				m_pathfinder.Begin(m_currentRequest.start, m_currentRequest.end);
 			}
 		}
 
 		public void FinishProcessing(Vector3[] path, bool success)
 		{
-			currentRequest.callback(path, success);
-			isProcessing = false;
+			m_currentRequest.callback(path, success);
+			m_isProcessing = false;
 			ProcessNext();
 		}
 	}

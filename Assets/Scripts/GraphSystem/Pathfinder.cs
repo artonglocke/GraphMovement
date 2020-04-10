@@ -9,7 +9,7 @@ namespace GraphSystem
 {
 	public enum HeuristicsType
 	{
-		Manhatan,
+		Manhattan,
 		Diagonal,
 		Euclidean
 	}
@@ -18,13 +18,13 @@ namespace GraphSystem
 	public class Pathfinder : MonoBehaviour
 	{
 		public HeuristicsType heuristics = HeuristicsType.Euclidean;
-		private GridSystem grid;
-		private PathfinderProcessor processor;
+		private GridSystem m_grid;
+		private PathfinderProcessor m_processor; // Circular dependency *sigh*
 
 		private void Awake()
 		{
-			grid = GetComponent<GridSystem>();
-			processor = GetComponent<PathfinderProcessor>();
+			m_grid = GetComponent<GridSystem>();
+			m_processor = GetComponent<PathfinderProcessor>();
 		}
 
 		IEnumerator OnFindPath(Vector3 start, Vector3 target)
@@ -32,12 +32,12 @@ namespace GraphSystem
 			Vector3[] waypoints = new Vector3[0];
 			bool pathFound = false;
 
-			Node startingNode = grid.GetNodeFromPosition(start);
-			Node endNode = grid.GetNodeFromPosition(target);
+			Node startingNode = m_grid.GetNodeFromPosition(start);
+			Node endNode = m_grid.GetNodeFromPosition(target);
 
 			if (startingNode.isWalkable && endNode.isWalkable)
 			{
-				Heap<Node> openNodes = new Heap<Node>(grid.GetSize());
+				Heap<Node> openNodes = new Heap<Node>(m_grid.GetSize());
 				List<Node> closedNodes = new List<Node>();
 
 				openNodes.Add(startingNode);
@@ -53,7 +53,7 @@ namespace GraphSystem
 						break;
 					}
 
-					foreach (var neighbour in grid.GetNeighbouringNodes(current))
+					foreach (var neighbour in m_grid.GetNeighbouringNodes(current))
 					{
 						if (!neighbour.isWalkable || closedNodes.Contains(neighbour))
 						{
@@ -86,7 +86,7 @@ namespace GraphSystem
 				waypoints = Retrace(startingNode, endNode);
 			}
 
-			processor.FinishProcessing(waypoints, pathFound);
+			m_processor.FinishProcessing(waypoints, pathFound);
 			
 		}
 
@@ -137,7 +137,7 @@ namespace GraphSystem
 
 			switch (heuristics)
 			{
-				case HeuristicsType.Manhatan:
+				case HeuristicsType.Manhattan:
 					return distanceX + distanceY;
 				case HeuristicsType.Diagonal:
 					return Math.Max(distanceX, distanceY);
@@ -148,7 +148,7 @@ namespace GraphSystem
 					}
 					return 14 * distanceX + 10 * (distanceY - distanceX); ;
 				default:
-					// Manhatan for default, not needed, but since its a switch case, must be
+					// Manhattan for default, not needed, but since its a switch case, must be
 					return distanceX + distanceY;
 			}
 			

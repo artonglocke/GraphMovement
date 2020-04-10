@@ -10,15 +10,14 @@ namespace PlayerMovement
 	[RequireComponent(typeof(PathfindingAgent))]
 	public class AStarMovement : MonoBehaviour
 	{
-
-		private MoveControls controls;
-		private PathfindingAgent agent;
+		private MoveControls m_controls;
+		private PathfindingAgent m_agent;
 
 		void Awake()
 		{
-			controls = new MoveControls();
-			controls.PointDetection.Movement.performed += OnAction;
-			agent = GetComponent<PathfindingAgent>();
+			m_controls = new MoveControls();
+			m_controls.PointDetection.Movement.performed += OnAction;
+			m_agent = GetComponent<PathfindingAgent>();
 		}
 
 		private void OnAction(InputAction.CallbackContext context)
@@ -27,18 +26,18 @@ namespace PlayerMovement
 			int maskId = LayerMask.NameToLayer("Walkable");
 			if (Physics.Raycast(ray, out RaycastHit hit) && hit.transform.gameObject.layer == maskId)
 			{
-				agent.MoveTo(hit.point);
+				m_agent.MoveTo(hit.point);
 			}
 		}
 
 		private void OnEnable()
 		{
-			controls.Enable();
+			m_controls.Enable();
 		}
 
 		private void OnDisable()
 		{
-			controls.Disable();
+			m_controls.Disable();
 		}
 	}
 }

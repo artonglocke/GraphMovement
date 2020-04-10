@@ -9,8 +9,8 @@ namespace GraphSystem
 	{
 		public float speed = 3.5f;
 
-		private Vector3[] path;
-		private int targetIndex;
+		private Vector3[] m_path;
+		private int m_targetIndex;
 
 		public void MoveTo(Vector3 target)
 		{
@@ -21,7 +21,7 @@ namespace GraphSystem
 		{
 			if (pathFound)
 			{
-				path = newPath;
+				m_path = newPath;
 				StopCoroutine("OnMoveAlongPath");
 				StartCoroutine("OnMoveAlongPath");
 			}
@@ -29,16 +29,16 @@ namespace GraphSystem
 
 		private IEnumerator OnMoveAlongPath()
 		{
-			Vector3 current = path[0];
-			targetIndex = 0;
+			Vector3 current = m_path[0];
+			m_targetIndex = 0;
 			while (true)
 			{
 				if (transform.position == current)
 				{
-					++targetIndex;
-					if (targetIndex < path.Length)
+					++m_targetIndex;
+					if (m_targetIndex < m_path.Length)
 					{
-						current = path[targetIndex];
+						current = m_path[m_targetIndex];
 					}
 					else
 					{
@@ -52,17 +52,17 @@ namespace GraphSystem
 
 		private void OnDrawGizmos()
 		{
-			if (path != null)
+			if (m_path != null)
 			{
-				for (int i = targetIndex; i < path.Length; i++)
+				for (int i = m_targetIndex; i < m_path.Length; i++)
 				{
-					if (i == targetIndex)
+					if (i == m_targetIndex)
 					{
-						Gizmos.DrawLine(transform.position, path[i]);
+						Gizmos.DrawLine(transform.position, m_path[i]);
 					}
 					else
 					{
-						Gizmos.DrawLine(path[i - 1], path[i]);
+						Gizmos.DrawLine(m_path[i - 1], m_path[i]);
 					}
 				}
 			}

@@ -11,14 +11,13 @@ namespace GraphSystem
 		public Vector2 gridArea;
 		public float nodeRadius;
 		public float offsetY = 1f;
-
 		public bool drawGizmos;
 
 		private Node[,] m_grid;
 		private float m_nodeDiameter;
 		private int m_gridX;
 		private int m_gridY;
-		private Obstacle[] obstacles;
+		private Obstacle[] m_obstacles;
 
 		void Awake()
 		{
@@ -26,7 +25,7 @@ namespace GraphSystem
 			m_nodeDiameter = nodeRadius * 2f;
 			m_gridX = Mathf.RoundToInt(gridArea.x / m_nodeDiameter);
 			m_gridY = Mathf.RoundToInt(gridArea.y / m_nodeDiameter);
-			obstacles = FindObjectsOfType<Obstacle>();
+			m_obstacles = FindObjectsOfType<Obstacle>();
 			InitializeGrid();
 		}
 
@@ -127,7 +126,7 @@ namespace GraphSystem
 			Vector2 position = new Vector2(point.x, point.z);
 			Vector2 objMin = position - Vector2.right * radius - Vector2.up * radius;
 			Vector2 objMax = position + Vector2.right * radius + Vector2.up * radius;
-			foreach (var obstacle in obstacles)
+			foreach (var obstacle in m_obstacles)
 			{
 				if (obstacle.IsColliding(objMin, objMax))
 				{
