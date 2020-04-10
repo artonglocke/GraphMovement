@@ -53,7 +53,7 @@ namespace GraphSystem
 				comparison = hCost.CompareTo(other.hCost);
 			}
 
-			// Nodes priority is reversed, return 1 if the weight is lower
+			// Nodes priority is reversed, return 1 if the priority is lower
 			return -comparison;
 		}
 	}
