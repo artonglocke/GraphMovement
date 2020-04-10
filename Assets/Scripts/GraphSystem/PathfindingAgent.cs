@@ -22,8 +22,8 @@ namespace GraphSystem
 			if (pathFound)
 			{
 				path = newPath;
-				StopCoroutine(OnMoveAlongPath());
-				StartCoroutine(OnMoveAlongPath());
+				StopCoroutine("OnMoveAlongPath");
+				StartCoroutine("OnMoveAlongPath");
 			}
 		}
 
@@ -31,7 +31,7 @@ namespace GraphSystem
 		{
 			Vector3 current = path[0];
 			targetIndex = 0;
-			while(true)
+			while (true)
 			{
 				if (transform.position == current)
 				{

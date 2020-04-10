@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Diagnostics;
 using CustomGenerics;
 using System;
 using System.Linq;
@@ -22,9 +21,6 @@ namespace GraphSystem
 
 		IEnumerator OnFindPath(Vector3 start, Vector3 target)
 		{
-			Stopwatch sw = new Stopwatch();
-			sw.Start();
-
 			Vector3[] waypoints = new Vector3[0];
 			bool pathFound = false;
 
@@ -34,7 +30,7 @@ namespace GraphSystem
 			if (startingNode.isWalkable && endNode.isWalkable)
 			{
 				Heap<Node> openNodes = new Heap<Node>(grid.GetSize());
-				HashSet<Node> closedNodes = new HashSet<Node>();
+				List<Node> closedNodes = new List<Node>();
 
 				openNodes.Add(startingNode);
 
@@ -45,8 +41,6 @@ namespace GraphSystem
 
 					if (current == endNode)
 					{
-						sw.Stop();
-						UnityEngine.Debug.Log($"Path found in: {sw.ElapsedMilliseconds} miliseconds");
 						pathFound = true;
 						break;
 					}
@@ -130,7 +124,7 @@ namespace GraphSystem
 
 		private int GetDistance(Node first, Node second)
 		{
-			int destinationX = Mathf.Abs(first.gridX - second.gridY);
+			int destinationX = Mathf.Abs(first.gridX - second.gridX);
 			int destinationY = Mathf.Abs(first.gridY - second.gridY);
 
 			if (destinationX > destinationY)

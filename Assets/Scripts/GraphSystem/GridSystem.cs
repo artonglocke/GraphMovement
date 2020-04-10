@@ -38,8 +38,8 @@ namespace GraphSystem
 			float ratioZ = Mathf.Clamp01((point.z + gridArea.y / 2f) / gridArea.y);
 
 
-			int coordX = Mathf.RoundToInt((gridArea.x - 1) * ratioX);
-			int coordY = Mathf.RoundToInt((gridArea.x - 1) * ratioZ);
+			int coordX = Mathf.RoundToInt((m_gridX - 1) * ratioX);
+			int coordY = Mathf.RoundToInt((m_gridY - 1) * ratioZ);
 
 			return m_grid[coordX, coordY];
 		}

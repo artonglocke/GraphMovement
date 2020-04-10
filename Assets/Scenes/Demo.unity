@@ -525,7 +525,7 @@ MonoBehaviour:
     m_Bits: 512
   gridArea: {x: 100, y: 100}
   nodeRadius: 0.5
-  drawGizmos: 1
+  drawGizmos: 0
 --- !u!114 &297278116
 MonoBehaviour:
   m_ObjectHideFlags: 0
