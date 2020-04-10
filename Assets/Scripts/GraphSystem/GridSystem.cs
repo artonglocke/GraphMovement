@@ -5,25 +5,31 @@ using UnityEngine;
 
 namespace GraphSystem
 {
-	public class Grid : MonoBehaviour
+	public class GridSystem : MonoBehaviour
 	{
-		public Transform trackableObject;
 		public LayerMask unwalkableLayer;
 		public Vector2 gridArea;
 		public float nodeRadius;
+
+		public bool drawGizmos;
 
 		private Node[,] m_grid;
 		private float m_nodeDiameter;
 		private int m_gridX;
 		private int m_gridY;
 
-		void Start()
+		void Awake()
 		{
 			// Calculating the grid area for node placement
 			m_nodeDiameter = nodeRadius * 2f;
 			m_gridX = Mathf.RoundToInt(gridArea.x / m_nodeDiameter);
 			m_gridY = Mathf.RoundToInt(gridArea.y / m_nodeDiameter);
 			InitializeGrid();
+		}
+
+		public int GetSize()
+		{
+			return m_gridX * m_gridY;
 		}
 
 		public Node GetNodeFromPosition(Vector3 point)
@@ -38,14 +44,43 @@ namespace GraphSystem
 			return m_grid[coordX, coordY];
 		}
 
+		public List<Node> GetNeighbouringNodes(Node node)
+		{
+			List<Node> neighbours = new List<Node>();
+
+			// Checking only neighbouring nodes, only 8 possible nodes
+			for (int i = -1; i <= 1; i++)
+			{
+				for (int j = -1; j <= 1; j++)
+				{
+					// Check whether its the original node position
+					if (i == 0 && j == 0)
+					{
+						continue;
+					}
+
+					// Check if out of bounds
+					int coordX = node.gridX + i;
+					int coordY = node.gridY + j;
+
+					if (coordX >= 0 && coordX < m_gridX && coordY >= 0 && coordY < m_gridY)
+					{
+						neighbours.Add(m_grid[coordX, coordY]);
+					}
+				}
+			}
+
+			return neighbours;
+		}
+
 		private void InitializeGrid()
 		{
 			m_grid = new Node[m_gridX, m_gridY];
 			Vector3 bottomLeft = transform.position - Vector3.right * gridArea.x / 2f - Vector3.forward * gridArea.y / 2f; // Bottom left point of the grid area
 
-			for (int i = 0; i < m_gridX; i++)
+			for (int i = 0; i < m_gridX; ++i)
 			{
-				for (int j = 0; j < m_gridY; j++)
+				for (int j = 0; j < m_gridY; ++j)
 				{
 					// Calculate node point, starting with bottom left corner
 					Vector3 point = bottomLeft + Vector3.right * (i * m_nodeDiameter + nodeRadius) + Vector3.forward * (j * m_nodeDiameter + nodeRadius);
@@ -54,28 +89,28 @@ namespace GraphSystem
 					bool isWalkable = !Physics.CheckSphere(point, nodeRadius, unwalkableLayer);
 
 					// Create node
-					m_grid[i, j] = new Node(isWalkable, point);
+					m_grid[i, j] = new Node(isWalkable, point, i, j);
 				}
 			}
 		}
 
 		private void OnDrawGizmos()
 		{
+			if (!drawGizmos)
+			{
+				return;
+			}
+
 			// Area
 			Gizmos.DrawWireCube(transform.position, new Vector3(gridArea.x, 1f, gridArea.y));
 
 			// Nodes
 			if (m_grid != null)
 			{
-				Node trackabeNode = GetNodeFromPosition(trackableObject.position);
 				foreach (Node node in m_grid)
 				{
 					// Green is for go, red is for obstacle				
 					Gizmos.color = (node.isWalkable) ? Color.green : Color.red;
-					if (node == trackabeNode)
-					{
-						Gizmos.color = Color.yellow;
-					}
 					Gizmos.DrawWireSphere(node.position, nodeRadius);
 				}
 			}

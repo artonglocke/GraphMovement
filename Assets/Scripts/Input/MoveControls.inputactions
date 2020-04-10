@@ -1,0 +1,45 @@
+{
+    "name": "MoveControls",
+    "maps": [
+        {
+            "name": "PointDetection",
+            "id": "f65da41f-14b5-400f-87fd-d74b48121738",
+            "actions": [
+                {
+                    "name": "Movement",
+                    "type": "Button",
+                    "id": "a3268a8e-8398-41e0-9a3e-fcc57b3e4546",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b7d0248a-697a-48c8-8aa8-719ea7577ec4",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": "MouseScheme",
+                    "action": "Movement",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "MouseScheme",
+            "bindingGroup": "MouseScheme",
+            "devices": [
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
