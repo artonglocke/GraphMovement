@@ -20,11 +20,7 @@ namespace GraphSystem
 		private Obstacle[] m_obstacles;
 
 		void Awake()
-		{
-			// Calculating the grid area for node placement
-			m_nodeDiameter = nodeRadius * 2f;
-			m_gridX = Mathf.RoundToInt(gridArea.x / m_nodeDiameter);
-			m_gridY = Mathf.RoundToInt(gridArea.y / m_nodeDiameter);
+		{		
 			m_obstacles = FindObjectsOfType<Obstacle>();
 			InitializeGrid();
 		}
@@ -32,6 +28,35 @@ namespace GraphSystem
 		public int GetSize()
 		{
 			return m_gridX * m_gridY;
+		}
+
+		public void InitializeGrid()
+		{
+			// Calculating the grid area for node placement
+			m_nodeDiameter = nodeRadius * 2f;
+			m_gridX = Mathf.RoundToInt(gridArea.x / m_nodeDiameter);
+			m_gridY = Mathf.RoundToInt(gridArea.y / m_nodeDiameter);
+
+			m_grid = new Node[m_gridX, m_gridY];
+			Vector3 bottomLeft = transform.position - Vector3.right * gridArea.x / 2f - Vector3.forward * gridArea.y / 2f; // Bottom left point of the grid area
+
+			for (int i = 0; i < m_gridX; ++i)
+			{
+				for (int j = 0; j < m_gridY; ++j)
+				{
+					// Calculate node point, starting with bottom left corner
+					Vector3 point = bottomLeft + Vector3.right * (i * m_nodeDiameter + nodeRadius) + Vector3.forward * (j * m_nodeDiameter + nodeRadius);
+
+					//Apply offset
+					point.y = offsetY;
+
+					// Check whether or not an there is an obstacle at the point
+					bool isWalkable = !CheckCollisions(point, nodeRadius);
+
+					// Create node
+					m_grid[i, j] = new Node(isWalkable, point, i, j);
+				}
+			}
 		}
 
 		public Node GetNodeFromPosition(Vector3 point)
@@ -73,30 +98,6 @@ namespace GraphSystem
 			}
 
 			return neighbours;
-		}
-
-		private void InitializeGrid()
-		{
-			m_grid = new Node[m_gridX, m_gridY];
-			Vector3 bottomLeft = transform.position - Vector3.right * gridArea.x / 2f - Vector3.forward * gridArea.y / 2f; // Bottom left point of the grid area
-
-			for (int i = 0; i < m_gridX; ++i)
-			{
-				for (int j = 0; j < m_gridY; ++j)
-				{
-					// Calculate node point, starting with bottom left corner
-					Vector3 point = bottomLeft + Vector3.right * (i * m_nodeDiameter + nodeRadius) + Vector3.forward * (j * m_nodeDiameter + nodeRadius);
-
-					//Apply offset
-					point.y = offsetY;
-
-					// Check whether or not an there is an obstacle at the point
-					bool isWalkable = !CheckCollisions(point, nodeRadius);
-
-					// Create node
-					m_grid[i, j] = new Node(isWalkable, point, i, j);
-				}
-			}
 		}
 
 		private void OnDrawGizmos()
